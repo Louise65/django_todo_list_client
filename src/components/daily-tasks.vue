@@ -10,7 +10,7 @@
             </span>
             
             <span class="w3-bar-item w3-right">
-                <button id="myBtn" class="w3-button w3-dark-grey" @click="createAdd(); isModalOpen = true; editMode = false">Create New Task</button>
+                <button id="myBtn" class="w3-button w3-dark-grey" @click="createAdd(); isModalOpen = true;">Create New Task</button>
             </span>
             
         </div>
@@ -75,7 +75,7 @@
                                 </button>
                             </td>
                             <td style="text-align: center">
-                                <button @click="updateAdd(dailytask); isModalOpen = true; editMode = true">
+                                <button @click="updateAdd(dailytask); isModalOpen = true;">
                                     <i class="material-symbols-outlined">edit</i>
                                 </button>
                             </td>
