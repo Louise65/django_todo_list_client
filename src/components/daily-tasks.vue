@@ -2,131 +2,139 @@
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,300,0,0" />
-    <main>
-    <div class="w3-bar w3-top w3-black w3-large">
-        <span class="w3-bar-item w3-left">
-            &nbsp;TO DO APP
-        </span>
-        
-        <span class="w3-bar-item w3-right">
-            <button id="myBtn" class="w3-button w3-dark-grey" @click="createAdd()">Create New Task</button>
-        </span>
-        
-    </div>
-    <div class="w3-main margin-left:300px;margin-top:43px;">
-        <!-- Daily Task Container -->
-        <div class = "w3-container">
-            <h1>Daily Tasks</h1>
-            <table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">
-                <thead>
-                    <tr>
-                        <th bgcolor="#AAAAAA">Task Name</th>
-                        <th bgcolor="#AAAAAA">Start Time</th>
-                        <th bgcolor="#AAAAAA">End Time</th>
-                        <th bgcolor="#AAAAAA">Priority</th>
-                        <th bgcolor="#AAAAAA">Status</th>
-                        <th bgcolor="#AAAAAA" style="text-align: center">Done?</th>
-                        <th bgcolor="#AAAAAA" style="text-align: center">Update</th>
-                        <th bgcolor="#AAAAAA" style="text-align: center">Delete</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr v-for="dailytask in dailyTasks" :key="dailytask.dailyTaskID">
-                        <td>
-                            <span>
-                                {{ dailytask.dailyTask_name }}
-                            </span>
-                        </td>
-                        <td>
-                            <span>
-                                {{ turnTo12HrFormat(dailytask.dailyStartTime) }}
-                            </span>
-                        </td>
-                        <td>
-                            <span>
-                                {{ turnTo12HrFormat(dailytask.dailyEndTime) }}
-                            </span>
-                        </td>
-                        <td>
-                            {{ determinePriority(dailytask.dailyTaskPriority) }}
-                        </td>
-                        <td>
-                            <!-- Not started -->
-                            <span v-if="checkStatus(dailytask.dailyStartTime, dailytask.dailyEndTime, dailytask.dailyTaskStatus) == 'Not Started'">
-                                {{ checkStatus(dailytask.dailyStartTime, dailytask.dailyEndTime, dailytask.dailyTaskStatus) }}
-                            </span>
-                            <!-- Ongoing -->
-                            <span class = "w3-text-orange" v-else-if="checkStatus(dailytask.dailyStartTime, dailytask.dailyEndTime, dailytask.dailyTaskStatus) == 'Ongoing'">
-                                {{ checkStatus(dailytask.dailyStartTime, dailytask.dailyEndTime, dailytask.dailyTaskStatus) }}
-                            </span>
-                            <!-- Late -->
-                            <span class = "w3-text-red" v-else-if="checkStatus(dailytask.dailyStartTime, dailytask.dailyEndTime, dailytask.dailyTaskStatus) == 'Late'">
-                                {{ checkStatus(dailytask.dailyStartTime, dailytask.dailyEndTime, dailytask.dailyTaskStatus) }}
-                            </span>
-                            <!-- Completed -->
-                            <span class = "w3-text-green" v-else-if="checkStatus(dailytask.dailyStartTime, dailytask.dailyEndTime, dailytask.dailyTaskStatus) == 'Completed'">
-                                {{ checkStatus(dailytask.dailyStartTime, dailytask.dailyEndTime, dailytask.dailyTaskStatus) }}
-                            </span>
-                        </td>
-                        <td style="text-align: center">
-                            <button @click="toggleTask(dailytask)">
-                                {{ dailytask.dailyTaskStatus ? 'Done' : 'Not Done' }}
-                            </button>
-                        </td>
-                        <td style="text-align: center">
-                            <button @click="updateAdd(dailytask)">
-                                <i class="material-symbols-outlined">edit</i>
-                            </button>
-                        </td>
-                        <td style="text-align: center">
-                            <button @click="deleteTask(dailytask)">
-                                <i class="material-symbols-outlined">delete_forever</i>
-                            </button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+    <div class="root">
+        <main>
+        <div class="w3-bar w3-top w3-black w3-large">
+            <span class="w3-bar-item w3-left">
+                &nbsp;TO DO APP
+            </span>
+            
+            <span class="w3-bar-item w3-right">
+                <button id="myBtn" class="w3-button w3-dark-grey" @click="createAdd(); isModalOpen = true; editMode = false">Create New Task</button>
+            </span>
+            
         </div>
-    </div>
-    </main>
-    <!-- Add new daily Task -->
-    <div v-if="showAddModal" class="modal">
-        <!-- Modal content -->
-        <div id="addNewModal" class="modal-content">
-            <span class="close" @click="closeAddModal">&times;</span>
-            <h1>{{ modalTitle }}</h1>
-                <label for="daily-task-name">Task Title: </label>
-                <input name="daily-task-name" id="daily-task-name" v-model="dailyTask_name" required/>
-                <br>
-
-                <label for="daily-time-hour">Starting Time: </label> 
-                <input type="time" id="daily-start-time" name="daily-start-time" v-model="dailyStartTime" required>
-                <br>
-                <label for="daily-time-min">Ending time</label> 
-                <input type="time" id="daily-end-time" name="daily-end-time" v-model="dailyEndTime" required>
-                <br>
-
-                <label for="priority">Priority: </label>
-                <select id="priority" v-model="dailyTaskPriority" required>
-                    <option value="3" selected>Low</option>
-                    <option value="2">Medium</option>
-                    <option value="1">High</option>
-                </select>
-                <br>
-
-                <button v-if="dailyTaskID=0" @click = "addTask()">
-                    Save daily task
-                </button>
-                <button v-if="dailyTaskID=!0" @click = "updateTask()">
-                    Save changes to task
-                </button>
+        <div class="w3-main margin-left:300px;margin-top:43px;">
+            <!-- Daily Task Container -->
+            <div class = "w3-container">
+                <h1>Daily Tasks</h1>
+                <table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">
+                    <thead>
+                        <tr>
+                            <th bgcolor="#AAAAAA">Task Name</th>
+                            <th bgcolor="#AAAAAA">Start Time</th>
+                            <th bgcolor="#AAAAAA">End Time</th>
+                            <th bgcolor="#AAAAAA">Priority</th>
+                            <th bgcolor="#AAAAAA">Status</th>
+                            <th bgcolor="#AAAAAA" style="text-align: center">Done?</th>
+                            <th bgcolor="#AAAAAA" style="text-align: center">Update</th>
+                            <th bgcolor="#AAAAAA" style="text-align: center">Delete</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="dailytask in dailyTasks" :key="dailytask.dailyTaskID">
+                            <td>
+                                <span>
+                                    {{ dailytask.dailyTask_name }}
+                                </span>
+                            </td>
+                            <td>
+                                <span>
+                                    {{ turnTo12HrFormat(dailytask.dailyStartTime) }}
+                                </span>
+                            </td>
+                            <td>
+                                <span>
+                                    {{ turnTo12HrFormat(dailytask.dailyEndTime) }}
+                                </span>
+                            </td>
+                            <td>
+                                {{ determinePriority(dailytask.dailyTaskPriority) }}
+                            </td>
+                            <td>
+                                <!-- Not started -->
+                                <span v-if="checkStatus(dailytask.dailyStartTime, dailytask.dailyEndTime, dailytask.dailyTaskStatus) == 'Not Started'">
+                                    {{ checkStatus(dailytask.dailyStartTime, dailytask.dailyEndTime, dailytask.dailyTaskStatus) }}
+                                </span>
+                                <!-- Ongoing -->
+                                <span class = "w3-text-orange" v-else-if="checkStatus(dailytask.dailyStartTime, dailytask.dailyEndTime, dailytask.dailyTaskStatus) == 'Ongoing'">
+                                    {{ checkStatus(dailytask.dailyStartTime, dailytask.dailyEndTime, dailytask.dailyTaskStatus) }}
+                                </span>
+                                <!-- Late -->
+                                <span class = "w3-text-red" v-else-if="checkStatus(dailytask.dailyStartTime, dailytask.dailyEndTime, dailytask.dailyTaskStatus) == 'Late'">
+                                    {{ checkStatus(dailytask.dailyStartTime, dailytask.dailyEndTime, dailytask.dailyTaskStatus) }}
+                                </span>
+                                <!-- Completed -->
+                                <span class = "w3-text-green" v-else-if="checkStatus(dailytask.dailyStartTime, dailytask.dailyEndTime, dailytask.dailyTaskStatus) == 'Completed'">
+                                    {{ checkStatus(dailytask.dailyStartTime, dailytask.dailyEndTime, dailytask.dailyTaskStatus) }}
+                                </span>
+                            </td>
+                            <td style="text-align: center">
+                                <button @click="toggleTask(dailytask)">
+                                    {{ dailytask.dailyTaskStatus ? 'Done' : 'Not Done' }}
+                                </button>
+                            </td>
+                            <td style="text-align: center">
+                                <button @click="updateAdd(dailytask); isModalOpen = true; editMode = true">
+                                    <i class="material-symbols-outlined">edit</i>
+                                </button>
+                            </td>
+                            <td style="text-align: center">
+                                <button @click="deleteTask(dailytask)">
+                                    <i class="material-symbols-outlined">delete_forever</i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
+        </main>
+        <!-- Add new daily Task -->
+            <div v-if="isModalOpen" class="modal">
+                <!-- Modal content -->
+                <div id="addNewModal" class="modal-content">
+                    <h1>{{ modalTitle }}</h1>
+                        <label for="daily-task-name">Task Title: </label>
+                        <input name="daily-task-name" id="daily-task-name" v-model="dailyTask_name" required/>
+                        <br>
+
+                        <label for="daily-time-hour">Starting Time: </label> 
+                        <input type="time" id="daily-start-time" name="daily-start-time" v-model="dailyStartTime" required>
+                        <br>
+                        <label for="daily-time-min">Ending time</label> 
+                        <input type="time" id="daily-end-time" name="daily-end-time" v-model="dailyEndTime" required>
+                        <br>
+
+                        <label for="priority">Priority: </label>
+                        <select id="priority" v-model="dailyTaskPriority" required>
+                            <option value="3" selected>Low</option>
+                            <option value="2">Medium</option>
+                            <option value="1">High</option>
+                        </select>
+                        <br>
+
+                        <button v-if="createMode=true" @click = "createTask()">
+                            Save daily task
+                        </button>
+                        <button v-if="createMode=false" @click = "updateTask()">
+                            Save changes to task
+                        </button>
+                        <button @click = "isModalOpen = false">Close Window</button>
+                </div>
+            </div>
     </div>
 </template>
 
 <style>
-    /* @import url('css/modal.css'); */
+    @import url('css/modal.css');
 </style>
+
+<script setup>
+    import { ref } from 'vue'
+
+    const isModalOpen = ref(false)
+</script>
 
 <script>
     export default {
@@ -134,7 +142,6 @@
             return {
                 // tasks
                 dailyTasks: [''],
-                dailyTaskID: 0,
                 dailyTask_name: '',
                 dailyStartTime: '',
                 dailyEndTime: '',
@@ -143,17 +150,11 @@
                 //modal stuff
                 modalTitle: "",
                 showAddModal: false,
-                showUpdateModal: false
             }
         },
         methods: {
             //modal stuff
-            openAddModal() {
-                this.showAddModal = true;
-            },
-            closeAddModal() {
-                this.showAddModal = false;
-
+            resetStuff() {
                 this.dailyTaskID = 0;
                 this.dailyTask_name = '';
                 this.dailyStartTime = '';
@@ -169,10 +170,8 @@
                 this.dailyTask_name = '';
                 this.dailyStartTime = '';
                 this.dailyEndTime = '';
-                this.dailyTaskPriority = 3; 
-
-                this.openAddModal();
-                console.log(this.dailyTaskID);
+                this.dailyTaskPriority = 3;
+                this.createMode=true;
             },
             updateAdd(task){
                 // Modal Stuff
@@ -182,10 +181,8 @@
                 this.dailyTask_name = task.dailyTask_name;
                 this.dailyStartTime = task.dailyStartTime;
                 this.dailyEndTime = task.dailyEndTime;
-                this.dailyTaskPriority = task.dailyTaskPriority;    
-
-                this.openAddModal();
-                console.log(this.dailyTaskID);
+                this.dailyTaskPriority = task.dailyTaskPriority;
+                this.createMode=false;
             },
             async getData() {
                 try {
@@ -216,18 +213,12 @@
                 } catch (error) {
                     console.log(error);
                 }
-                // Reset stuff
-                this.dailyTaskID = 0;
-                this.dailyTask_name = '';
-                this.dailyStartTime = '';
-                this.dailyEndTime = '';
-                this.dailyTaskPriority = 3;
                 //refresh table
                 this.getData();
                 // Close modal
-                this.closeAddModal();
+                this.resetStuff();
             },
-            async updateTask(task){
+            async updateTask(){
                 try {
                     //if start time is greater than end time
                     if (this.dailyStartTime > this.dailyEndTime){
@@ -236,7 +227,7 @@
                         this.dailyEndTime = temp;
                     }
                     // Send a PUT request to the API
-                    const response = await this.$http.put(`http://localhost:8000/todolist/dailytasks/${task.dailyTaskID}/`, {
+                    const response = await this.$http.put(`http://localhost:8000/todolist/dailytasks/${this.dailyTaskID}/`, {
                         dailyTask_name: this.dailyTask_name,
                         dailyStartTime: this.dailyStartTime,
                         dailyEndTime: this.dailyEndTime,
@@ -246,14 +237,10 @@
                 } catch (error) {
                     console.log(error);
                 }
-                // Reset stuff
-                this.dailyTask_name = '';
-                this.dailyStartTime = '';
-                this.dailyEndTime = '';
                 //refresh table
                 this.getData();
                 // Close modal
-                this.closeUpdateModal();
+                this.resetStuff();
             },
             async toggleTask(task){
                 try{
